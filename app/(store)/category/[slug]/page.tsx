@@ -4,24 +4,33 @@ import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { motion } from "framer-motion";
-import { SlidersHorizontal, ChevronDown } from "lucide-react";
+import { SlidersHorizontal, ChevronDown, Check } from "lucide-react";
+import { useState, useMemo } from "react";
+
+import { PRODUCTS } from "@/lib/products";
 
 export default function CategoryPage({ params }: { params: { slug: string } }) {
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState("New Arrivals");
+  
   const categoryName = params.slug.replace('-', ' ').toUpperCase();
-  const productCount: number = 12;
 
-  if (productCount === 0) {
-    redirect("/");
-  }
+  const filteredProducts = useMemo(() => {
+    let result = [...PRODUCTS];
+    
+    // Sort logic
+    if (sortBy === "Price: Low to High") result.sort((a, b) => a.price - b.price);
+    if (sortBy === "Price: High to Low") result.sort((a, b) => b.price - a.price);
+    
+    // Size Filter
+    if (selectedSize) {
+      result = result.filter(p => p.sizes.includes(selectedSize));
+    }
+    
+    return result;
+  }, [sortBy, selectedSize]);
 
-  const products = Array(12).fill(null).map((_, i) => ({
-    id: i,
-    name: `The Archival Silhouette EX-01`,
-    price: 2499,
-    comparePrice: 3999,
-    // Using the same 2 demo images for all products to show the system consistency
-    images: [`/products/IMG-20250713-WA0013.jpg`, `/products/IMG-20250713-WA0014.jpg`]
-  }));
+  const productCount = filteredProducts.length;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const container: any = {
@@ -90,12 +99,23 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
                 <div>
                   <h3 className="font-inter text-[11px] font-bold text-brand-white uppercase tracking-[0.2em] mb-6 flex justify-between items-center group cursor-pointer">
                     Sort Order
-                    <ChevronDown size={14} className="text-brand-muted group-hover:text-brand-white transition-colors" />
                   </h3>
                   <div className="flex flex-col gap-4 font-inter text-body-sm text-brand-muted">
-                    {['New Arrivals', 'Price: Low to High', 'Price: High to Low', 'Bestselling'].map((sort, i) => (
-                      <label key={sort} className="flex items-center gap-3 cursor-pointer hover:text-brand-white transition-all duration-300 transform hover:translate-x-1">
-                        <input type="radio" name="sort" className="accent-brand-accent w-4 h-4 bg-transparent border-brand-border" defaultChecked={i === 0} /> 
+                    {['New Arrivals', 'Price: Low to High', 'Price: High to Low', 'Bestselling'].map((sort) => (
+                      <label 
+                        key={sort} 
+                        className={`flex items-center gap-3 cursor-pointer transition-all duration-300 transform hover:translate-x-1 ${sortBy === sort ? 'text-brand-accent' : 'hover:text-brand-white'}`}
+                      >
+                        <input 
+                          type="radio" 
+                          name="sort" 
+                          className="hidden" 
+                          checked={sortBy === sort}
+                          onChange={() => setSortBy(sort)}
+                        /> 
+                        <div className={`w-3 h-3 rounded-full border border-brand-border flex items-center justify-center ${sortBy === sort ? 'border-brand-accent' : ''}`}>
+                          {sortBy === sort && <div className="w-1.5 h-1.5 rounded-full bg-brand-accent" />}
+                        </div>
                         <span className="uppercase text-[11px] tracking-widest">{sort}</span>
                       </label>
                     ))}
@@ -105,11 +125,18 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
                 <div>
                   <h3 className="font-inter text-[11px] font-bold text-brand-white uppercase tracking-[0.2em] mb-6">Archival Sizes</h3>
                   <div className="grid grid-cols-3 gap-2">
-                    {['XS', 'S', 'M', 'L', 'XL', 'XXL'].map(size => (
-                      <button key={size} className="border border-brand-border/50 aspect-square flex items-center justify-center font-inter text-[11px] text-brand-muted hover:border-brand-accent hover:text-brand-accent transition-all duration-300">
-                        {size}
-                      </button>
-                    ))}
+                    {['XS', 'S', 'M', 'L', 'XL', 'XXL'].map(size => {
+                      const isActive = selectedSize === size;
+                      return (
+                        <button 
+                          key={size} 
+                          onClick={() => setSelectedSize(isActive ? null : size)}
+                          className={`border aspect-square flex items-center justify-center font-inter text-[11px] transition-all duration-300 ${isActive ? 'border-brand-accent text-brand-accent bg-brand-accent/5' : 'border-brand-border/50 text-brand-muted hover:border-brand-white hover:text-brand-white'}`}
+                        >
+                          {size}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -122,23 +149,33 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
               variants={container}
               initial="hidden"
               animate="show"
+              key={`${selectedSize}-${sortBy}`}
               className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-12 md:gap-x-8 md:gap-y-16"
             >
-              {products.map((product) => (
+              {filteredProducts.map((product) => (
                 <motion.div key={product.id} variants={item}>
-                  <Link href={`/product/archival-tee-${product.id}`} className="group block">
+                  <Link href={`/product/${product.slug}`} className="group block">
                     <div className="aspect-[3/4] bg-brand-dark border border-brand-border relative overflow-hidden mb-6">
                       <div className="absolute inset-0 bg-brand-dark/20 z-10" />
                       <div className="absolute inset-0 bg-brand-accent/0 group-hover:bg-brand-accent/5 transition-colors duration-500 z-20" />
-                      <div className="absolute top-4 left-4 bg-brand-white text-brand-black font-inter font-bold text-[9px] px-3 py-1 uppercase tracking-widest z-30">
-                        {product.id === 0 ? "DEMO PRODUCT" : "NEW ARRIVAL"}
+                      <div className="absolute top-4 left-4 bg-brand-white text-brand-black font-inter font-bold text-[9px] px-3 py-1 uppercase tracking-widest z-40">
+                        {product.id === 1 ? "STOCKED AT ARCHIVE" : "LIMITED EDITION"}
                       </div>
                       
+                      {/* Main Image */}
                       <Image 
                         src={product.images[0]} 
                         alt={product.name}
                         fill
-                        className="object-cover group-hover:scale-110 transition-transform duration-1000 ease-smooth"
+                        className="object-cover group-hover:opacity-0 transition-opacity duration-700 ease-smooth"
+                      />
+
+                      {/* Hover Image */}
+                      <Image 
+                        src={product.images[1]} 
+                        alt={`${product.name} Alternate`}
+                        fill
+                        className="object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-smooth absolute inset-0 transform group-hover:scale-105"
                       />
                       
                       <div className="absolute bottom-0 left-0 w-full h-[1px] bg-brand-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left z-30" />

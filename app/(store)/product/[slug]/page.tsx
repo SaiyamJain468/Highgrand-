@@ -1,11 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCart } from "@/lib/context/CartContext";
 import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Ruler, Heart, Share2, ShieldCheck } from "lucide-react";
+import { PRODUCTS } from "@/lib/products";
+import { notFound } from "next/navigation";
 
 export default function ProductPage({ params }: { params: { slug: string } }) {
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
@@ -13,21 +15,20 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
   const [activeAccordion, setActiveAccordion] = useState<string | null>("desc");
   const { addItem } = useCart();
 
-  // Mock Data
-  const product = {
-    id: params.slug,
-    name: "THE ARCHIVAL SILHOUETTE EX-01",
-    price: 2499,
-    comparePrice: 3999,
-    sizes: [
-      { name: "XS", inStock: true },
-      { name: "S", inStock: true },
-      { name: "M", inStock: false },
-      { name: "L", inStock: true },
-      { name: "XL", inStock: true }
-    ],
-    images: [`/products/IMG-20250713-WA0013.jpg`, `/products/IMG-20250713-WA0014.jpg`],
-  };
+  const product = PRODUCTS.find(p => p.slug === params.slug);
+
+  useEffect(() => {
+    if (product) {
+      document.title = `${product.name} | HIGHGRAND ARCHIVE`;
+    }
+    return () => {
+      document.title = "HIGHGRAND ARCHIVE";
+    };
+  }, [product]);
+
+  if (!product) {
+    return notFound();
+  }
 
   const handleAddToCart = () => {
     if (!selectedSize) {
@@ -37,7 +38,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
     setIsAdding(true);
     
     addItem({
-      id: product.id,
+      id: product.id.toString(),
       name: product.name,
       price: product.price,
       quantity: 1,
@@ -120,21 +121,24 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
                   </button>
                 </div>
                 <div className="grid grid-cols-5 gap-3">
-                  {product.sizes.map((size) => (
-                    <button
-                      key={size.name}
-                      disabled={!size.inStock}
-                      onClick={() => setSelectedSize(size.name)}
-                      className={`h-[56px] border font-inter text-[12px] font-bold flex items-center justify-center transition-all duration-300
-                        ${!size.inStock ? "border-brand-border/30 text-brand-disabled cursor-not-allowed bg-brand-black" : 
-                          selectedSize === size.name 
-                            ? "border-brand-accent bg-brand-accent text-brand-black scale-[1.05] shadow-[0_0_20px_rgba(200,169,110,0.2)]" 
-                            : "border-brand-border text-brand-white hover:border-brand-white bg-transparent"
-                        }`}
-                    >
-                      {size.name}
-                    </button>
-                  ))}
+                  {['XS', 'S', 'M', 'L', 'XL'].map((size) => {
+                    const inStock = product.sizes.includes(size);
+                    return (
+                      <button
+                        key={size}
+                        disabled={!inStock}
+                        onClick={() => setSelectedSize(size)}
+                        className={`h-[56px] border font-inter text-[12px] font-bold flex items-center justify-center transition-all duration-300
+                          ${!inStock ? "border-brand-border/30 text-brand-disabled cursor-not-allowed bg-brand-black" : 
+                            selectedSize === size 
+                              ? "border-brand-accent bg-brand-accent text-brand-black scale-[1.05] shadow-[0_0_20px_rgba(200,169,110,0.2)]" 
+                              : "border-brand-border text-brand-white hover:border-brand-white bg-transparent"
+                          }`}
+                      >
+                        {size}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -173,8 +177,8 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
               {/* Accordions */}
               <div className="space-y-4">
                 {[
-                  { id: 'desc', title: 'Product Vision', content: 'Crafted with architectural precision, our oversized hoodie features a heavyweight double-knit interlock structure. The drop-shoulder silhouette provides a structured yet relaxed form that maintains its character over time.' },
-                  { id: 'fit', title: 'Fitting & Sizing', content: 'Models are 6&apos;1&quot; wearing size L. True to oversized fit. If you prefer a more tailored look, size down one. Chest measurements: S (52&quot;), M (54&quot;), L (56&quot;).' },
+                  { id: 'desc', title: 'Product Vision', content: product.description },
+                  { id: 'fit', title: 'Fitting & Sizing', content: 'Models are 6\'1" wearing size L. True to oversized fit. If you prefer a more tailored look, size down one.' },
                   { id: 'shipping', title: 'Shipping & Logistics', content: 'Dispatch within 48 hours. Express global shipping included. Tracking ID generated instantly upon authentication.' }
                 ].map((acc) => (
                   <div key={acc.id} className="border-b border-brand-border/50">
