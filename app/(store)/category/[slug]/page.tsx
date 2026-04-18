@@ -131,7 +131,7 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
                         <button 
                           key={size} 
                           onClick={() => setSelectedSize(isActive ? null : size)}
-                          className={`border aspect-square flex items-center justify-center font-inter text-[10px] sm:text-[11px] transition-all duration-300 ${isActive ? 'border-brand-accent text-brand-accent bg-brand-accent/5' : 'border-brand-border/50 text-brand-muted hover:border-brand-white hover:text-brand-white'}`}
+                          className={`border h-10 w-full flex items-center justify-center font-inter text-[10px] sm:text-[11px] transition-all duration-300 ${isActive ? 'border-brand-accent text-brand-accent bg-brand-accent/5' : 'border-brand-border/50 text-brand-muted hover:border-brand-white hover:text-brand-white'}`}
                         >
                           {size}
                         </button>

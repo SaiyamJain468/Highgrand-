@@ -131,7 +131,8 @@ export default function Navbar() {
             animate={{ clipPath: "circle(150% at 100% 0%)" }}
             exit={{ clipPath: "circle(0% at 100% 0%)" }}
             transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
-            className="fixed inset-0 z-50 bg-brand-black flex flex-col justify-center px-8 lg:hidden"
+            className="fixed inset-0 z-[9999] bg-brand-black flex flex-col justify-center px-8 lg:hidden"
+            style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', pointerEvents: 'auto' }}
           >
             {/* Grain Overlay with scanning line animation */}
             <div className="absolute inset-0 opacity-[0.05] pointer-events-none bg-[url('/noise.svg')] bg-repeat" />
