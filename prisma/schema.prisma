@@ -1,0 +1,223 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+enum Role {
+  ADMIN
+  CUSTOMER
+}
+
+enum Size {
+  XS
+  S
+  M
+  L
+  XL
+  XXL
+  XXXL
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  RAZORPAY
+  PHONEPE
+  COD
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum DiscountType {
+  PERCENT
+  FLAT
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(CUSTOMER)
+  phone     String?
+  createdAt DateTime @default(now())
+
+  addresses Address[]
+  carts     Cart[]
+  orders    Order[]
+  reviews   Review[]
+}
+
+model Address {
+  id        String  @id @default(cuid())
+  userId    String
+  name      String
+  line1     String
+  line2     String?
+  city      String
+  state     String
+  pincode   String
+  isDefault Boolean @default(false)
+
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Category {
+  id           String    @id @default(cuid())
+  name         String
+  slug         String    @unique
+  description  String?   @db.Text
+  image        String?
+  isActive     Boolean   @default(false)
+  displayOrder Int       @default(0)
+
+  products     Product[]
+}
+
+model Product {
+  id           String   @id @default(cuid())
+  name         String
+  slug         String   @unique
+  description  String   @db.Text
+  price        Float
+  comparePrice Float?
+  images       Json?    // Array of image URLs
+  categoryId   String
+  tags         Json?    // Array of tags
+  isActive     Boolean  @default(false)
+  isFeatured   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  category     Category         @relation(fields: [categoryId], references: [id])
+  variants     ProductVariant[]
+  cartItems    CartItem[]
+  orderItems   OrderItem[]
+  reviews      Review[]
+}
+
+model ProductVariant {
+  id         String @id @default(cuid())
+  productId  String
+  size       Size
+  stock      Int    @default(0)
+  sku        String @unique
+
+  product    Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  cartItems  CartItem[]
+  orderItems OrderItem[]
+}
+
+model Cart {
+  id        String   @id @default(cuid())
+  userId    String?
+  sessionId String?  @unique // For guest carts
+  
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
+}
+
+model CartItem {
+  id         String @id @default(cuid())
+  cartId     String
+  productId  String
+  variantId  String
+  quantity   Int    @default(1)
+
+  cart       Cart           @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product    Product        @relation(fields: [productId], references: [id])
+  variant    ProductVariant @relation(fields: [variantId], references: [id])
+
+  @@unique([cartId, variantId])
+}
+
+model Order {
+  id                String        @id @default(cuid())
+  userId            String
+  status            OrderStatus   @default(PENDING)
+  total             Float
+  subtotal          Float
+  discount          Float         @default(0)
+  shippingCost      Float         @default(0)
+  paymentMethod     PaymentMethod
+  paymentStatus     PaymentStatus @default(PENDING)
+  razorpayOrderId   String?
+  shiprocketOrderId String?
+  address           Json          // Store snapshot of address
+  createdAt         DateTime      @default(now())
+
+  user              User          @relation(fields: [userId], references: [id])
+  items             OrderItem[]
+}
+
+model OrderItem {
+  id              String @id @default(cuid())
+  orderId         String
+  productId       String
+  variantId       String
+  quantity        Int
+  price           Float
+  productSnapshot Json   // Snapshot of name, image, size, etc.
+
+  order           Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product         Product        @relation(fields: [productId], references: [id])
+  variant         ProductVariant @relation(fields: [variantId], references: [id])
+}
+
+model Coupon {
+  id        String       @id @default(cuid())
+  code      String       @unique
+  type      DiscountType
+  value     Float
+  minOrder  Float?
+  maxUses   Int?
+  usedCount Int          @default(0)
+  expiresAt DateTime?
+  isActive  Boolean      @default(true)
+}
+
+model Banner {
+  id           String  @id @default(cuid())
+  title        String?
+  subtitle     String?
+  image        String
+  link         String?
+  position     String  @default("hero")
+  isActive     Boolean @default(true)
+  displayOrder Int     @default(0)
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  productId  String
+  userId     String
+  rating     Int
+  comment    String?  @db.Text
+  isApproved Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model SiteSettings {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String @db.Text
+}
