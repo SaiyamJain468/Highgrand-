@@ -2,9 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { motion } from "framer-motion";
-import { SlidersHorizontal, ChevronDown, Check } from "lucide-react";
+import { SlidersHorizontal } from "lucide-react";
 import { useState, useMemo } from "react";
 
 import { PRODUCTS } from "@/lib/products";
@@ -124,7 +123,7 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
 
                 <div>
                   <h3 className="font-inter text-[11px] font-bold text-brand-white uppercase tracking-[0.2em] mb-6">Archival Sizes</h3>
-                  <div className="grid grid-cols-4 sm:grid-cols-3 gap-2">
+                  <div className="grid grid-cols-3 gap-2">
                     {['XS', 'S', 'M', 'L', 'XL', 'XXL'].map(size => {
                       const isActive = selectedSize === size;
                       return (

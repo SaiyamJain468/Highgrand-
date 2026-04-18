@@ -22,7 +22,7 @@ export default function DynamicTitle() {
         const parts = pathname.split("/").filter(Boolean);
         const lastPart = parts[parts.length - 1] || "";
         
-        let titlePrefix = lastPart
+        const titlePrefix = lastPart
           .replace(/-/g, " ")
           .split(" ")
           .map(word => word.charAt(0).toUpperCase() + word.slice(1))

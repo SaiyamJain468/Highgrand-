@@ -1,16 +1,14 @@
 "use client";
 
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { ShoppingBag, User, Search, Menu, X } from "lucide-react";
+import { ShoppingBag, User, Search } from "lucide-react";
 import { useCart } from "@/lib/context/CartContext";
-import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Navbar() {
   const [scrollY, setScrollY] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const pathname = usePathname();
   const { cartCount, openDrawer } = useCart();
 
   useEffect(() => {
@@ -51,7 +49,7 @@ export default function Navbar() {
       }`}
     >
       <div className="container-wide h-full flex items-center justify-between">
-        <Link href="/" className="group flex items-center z-[100]" onClick={() => setIsMenuOpen(false)}>
+        <Link href="/" className="group flex items-center z-[10000]" onClick={() => setIsMenuOpen(false)}>
           <div className="font-bebas text-[28px] text-brand-white leading-none tracking-wider group-hover:text-brand-accent transition-colors mt-1">
             HIGHGRAND
           </div>
@@ -71,7 +69,7 @@ export default function Navbar() {
         </div>
 
         {/* Icons */}
-        <div className="flex items-center gap-4 lg:gap-6 z-[100]">
+        <div className="flex items-center gap-4 lg:gap-6 z-[10000]">
           <button className="text-brand-white hover:text-brand-accent transition-colors duration-300">
             <Search size={20} strokeWidth={1.2} />
           </button>
