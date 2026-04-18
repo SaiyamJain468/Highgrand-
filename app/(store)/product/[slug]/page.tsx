@@ -26,7 +26,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
       { name: "L", inStock: true },
       { name: "XL", inStock: true }
     ],
-    images: [`/products/IMG-20250713-WA0001.jpg`, `/products/IMG-20250713-WA0002.jpg`],
+    images: [`/products/IMG-20250713-WA0013.jpg`, `/products/IMG-20250713-WA0014.jpg`],
   };
 
   const handleAddToCart = () => {

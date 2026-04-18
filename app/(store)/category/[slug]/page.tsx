@@ -20,7 +20,7 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
     price: 2499,
     comparePrice: 3999,
     // Using the same 2 demo images for all products to show the system consistency
-    images: [`/products/IMG-20250713-WA0001.jpg`, `/products/IMG-20250713-WA0002.jpg`]
+    images: [`/products/IMG-20250713-WA0013.jpg`, `/products/IMG-20250713-WA0014.jpg`]
   }));
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
