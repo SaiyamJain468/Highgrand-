@@ -17,7 +17,7 @@ export default function DynamicTitle() {
 
     const updateTitle = () => {
       if (pathname === "/") {
-        document.title = "HIGHGRAND | ARCHIVAL STREETWEAR";
+        document.title = "HIGHGRAND ▲ | ARCHIVAL STREETWEAR";
       } else {
         const parts = pathname.split("/").filter(Boolean);
         const lastPart = parts[parts.length - 1] || "";
@@ -29,11 +29,11 @@ export default function DynamicTitle() {
           .join(" ");
 
         if (pathname.includes("/product/")) {
-          document.title = `${titlePrefix.toUpperCase()} | HIGHGRAND ARCHIVE`;
+          document.title = `${titlePrefix.toUpperCase()} ▲ | HIGHGRAND ARCHIVE`;
         } else if (pathname.includes("/category/")) {
-          document.title = `${titlePrefix.toUpperCase()} | HIGHGRAND`;
+          document.title = `${titlePrefix.toUpperCase()} ▲ | HIGHGRAND`;
         } else {
-          document.title = `${titlePrefix} | HIGHGRAND`;
+          document.title = `${titlePrefix} ▲| HIGHGRAND`;
         }
       }
     };

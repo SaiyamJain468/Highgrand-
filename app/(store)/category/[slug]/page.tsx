@@ -124,14 +124,14 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
 
                 <div>
                   <h3 className="font-inter text-[11px] font-bold text-brand-white uppercase tracking-[0.2em] mb-6">Archival Sizes</h3>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-4 sm:grid-cols-3 gap-2">
                     {['XS', 'S', 'M', 'L', 'XL', 'XXL'].map(size => {
                       const isActive = selectedSize === size;
                       return (
                         <button 
                           key={size} 
                           onClick={() => setSelectedSize(isActive ? null : size)}
-                          className={`border aspect-square flex items-center justify-center font-inter text-[11px] transition-all duration-300 ${isActive ? 'border-brand-accent text-brand-accent bg-brand-accent/5' : 'border-brand-border/50 text-brand-muted hover:border-brand-white hover:text-brand-white'}`}
+                          className={`border aspect-square flex items-center justify-center font-inter text-[10px] sm:text-[11px] transition-all duration-300 ${isActive ? 'border-brand-accent text-brand-accent bg-brand-accent/5' : 'border-brand-border/50 text-brand-muted hover:border-brand-white hover:text-brand-white'}`}
                         >
                           {size}
                         </button>

@@ -25,10 +25,10 @@ export default function AdminLayout({
 
   return (
     <div className="flex h-screen bg-brand-black text-brand-white font-inter">
-      
+
       {/* Mobile sidebar toggle overlay */}
       {sidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
@@ -41,14 +41,14 @@ export default function AdminLayout({
             HIGHGRAND ADMIN
           </Link>
         </div>
-        
+
         <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-2">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href || pathname?.startsWith(`${item.href}/`);
             return (
-              <Link 
-                key={item.name} 
+              <Link
+                key={item.name}
                 href={item.href}
                 className={`flex items-center gap-3 px-4 py-3 rounded text-[13px] uppercase tracking-wider transition-colors ${isActive ? 'bg-brand-white text-brand-black font-medium' : 'text-brand-muted hover:text-brand-white hover:bg-[#1A1A1A]'}`}
                 onClick={() => setSidebarOpen(false)}
@@ -61,7 +61,7 @@ export default function AdminLayout({
         </nav>
 
         <div className="p-4 border-t border-brand-border">
-          <button 
+          <button
             onClick={() => signOut({ callbackUrl: '/login' })}
             className="flex items-center gap-3 px-4 py-3 w-full text-left text-[13px] uppercase tracking-wider text-brand-muted hover:text-brand-white hover:bg-[#1A1A1A] transition-colors rounded"
           >
@@ -74,15 +74,15 @@ export default function AdminLayout({
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* TASK 62: Topbar */}
         <header className="h-16 flex items-center justify-between border-b border-brand-border px-6 bg-brand-black z-30">
-          <button 
+          <button
             className="lg:hidden text-brand-white"
             onClick={() => setSidebarOpen(true)}
           >
             <Menu size={24} />
           </button>
-          
+
           <div className="flex-1" />
-          
+
           <div className="flex items-center gap-4">
             <div className="text-right hidden sm:block">
               <p className="text-[12px] font-medium text-brand-white uppercase">Admin User</p>

@@ -20,18 +20,8 @@ export default function StoreLayout({
       <Navbar />
       <CartDrawer />
       <main className="flex-grow">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={pathname}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] as any }}
-          >
+            {/* Removed motion.div wrapper to fix blackout glitch during navigation */}
             {children}
-          </motion.div>
-        </AnimatePresence>
       </main>
       <Footer />
     </div>

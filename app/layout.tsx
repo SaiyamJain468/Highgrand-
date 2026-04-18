@@ -15,8 +15,9 @@ export const metadata: Metadata = {
   title: "HIGHGRAND | Premium Oversized Clothing",
   description: "Premium oversized t-shirts with editorial street fashion culture. Designed to make a statement.",
   icons: {
-    icon: "/Logo.png",
-    apple: "/Logo.png",
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
   },
 };
 

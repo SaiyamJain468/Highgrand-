@@ -12,6 +12,7 @@ import { notFound } from "next/navigation";
 export default function ProductPage({ params }: { params: { slug: string } }) {
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
+  const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
   const [activeAccordion, setActiveAccordion] = useState<string | null>("desc");
   const { addItem } = useCart();
 
@@ -115,7 +116,10 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
                   <span className="font-inter text-[11px] font-bold uppercase text-brand-white tracking-[0.2em]">
                     Size: {selectedSize || "Select"}
                   </span>
-                  <button className="flex items-center gap-2 font-inter text-[11px] uppercase text-brand-muted hover:text-brand-white transition-colors tracking-[0.1em] border-b border-brand-muted pb-0.5">
+                  <button 
+                    onClick={() => setIsSizeGuideOpen(true)}
+                    className="flex items-center gap-2 font-inter text-[11px] uppercase text-brand-muted hover:text-brand-white transition-colors tracking-[0.1em] border-b border-brand-muted pb-0.5"
+                  >
                     <Ruler size={14} strokeWidth={1.5} />
                     Size Guide
                   </button>
@@ -212,6 +216,72 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
           </div>
         </div>
       </div>
+
+      {/* Size Guide Modal */}
+      <AnimatePresence>
+        {isSizeGuideOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsSizeGuideOpen(false)}
+              className="absolute inset-0 bg-brand-black/80 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-lg bg-brand-dark border border-brand-border p-8 md:p-12 shadow-2xl"
+            >
+              <button 
+                onClick={() => setIsSizeGuideOpen(false)}
+                className="absolute top-6 right-6 text-brand-muted hover:text-brand-white transition-colors"
+              >
+                <Plus size={24} className="rotate-45" />
+              </button>
+              
+              <h2 className="font-bebas text-[32px] text-brand-white tracking-wider mb-8 uppercase">Size Guide — {product.name}</h2>
+              
+              <div className="overflow-x-auto">
+                <table className="w-full text-left font-inter text-[12px] text-brand-white">
+                  <thead>
+                    <tr className="border-b border-brand-border text-brand-muted tracking-[0.2em] uppercase">
+                      <th className="py-4 font-bold">Size</th>
+                      <th className="py-4 font-bold">Chest (cm)</th>
+                      <th className="py-4 font-bold">Length (cm)</th>
+                      <th className="py-4 font-bold">Shoulder (cm)</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-brand-border/30">
+                    {[
+                      { s: 'XS', c: '112', l: '68', sh: '48' },
+                      { s: 'S', c: '116', l: '70', sh: '50' },
+                      { s: 'M', c: '120', l: '72', sh: '52' },
+                      { s: 'L', c: '124', l: '74', sh: '54' },
+                      { s: 'XL', c: '128', l: '76', sh: '56' },
+                    ].map((row) => (
+                      <tr key={row.s} className="hover:bg-brand-white/5 transition-colors group">
+                        <td className="py-4 font-bold text-brand-accent group-hover:pl-2 transition-all">{row.s}</td>
+                        <td className="py-4 text-brand-muted">{row.c}</td>
+                        <td className="py-4 text-brand-muted">{row.l}</td>
+                        <td className="py-4 text-brand-muted">{row.sh}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              
+              <div className="mt-8 pt-8 border-t border-brand-border">
+                <p className="font-inter text-[11px] text-brand-muted leading-relaxed uppercase tracking-wider">
+                  * All measurements are in centimeters and refer to garment dimensions.<br/>
+                  * Standard oversized fit. Our garments are designed to be roomy.
+                </p>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

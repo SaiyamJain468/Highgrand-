@@ -43,11 +43,11 @@ export default function Navbar() {
 
   return (
     <nav
-      style={{ top: `${topOffset}px` }}
+      style={{ top: typeof window !== 'undefined' && window.innerWidth < 1024 ? '0px' : `${topOffset}px` }}
       className={`fixed w-full z-50 h-[64px] transition-all duration-300 ease-smooth ${
-        scrolled
+        scrolled || (typeof window !== 'undefined' && window.innerWidth < 1024)
           ? "bg-brand-black/90 backdrop-blur-md border-b border-brand-border"
-          : "bg-transparent border-b border-transparent"
+          : "bg-transparent border-b border-transparent lg:border-transparent"
       }`}
     >
       <div className="container-wide h-full flex items-center justify-between">
@@ -170,7 +170,6 @@ export default function Navbar() {
                 </motion.div>
               ))}
             </div>
-
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
